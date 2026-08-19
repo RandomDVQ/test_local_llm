@@ -1,41 +1,5 @@
-import os
-
-from dotenv import load_dotenv
-from openai import OpenAI
-
-
-load_dotenv()
-
-MODEL = os.getenv("MODEL")
-BASE_URL = os.getenv("BASE_URL")
-API_KEY = os.getenv("API_KEY")
-
-
-client = OpenAI(
-    base_url=BASE_URL,
-    api_key=API_KEY,
-)
-
-
-def ask_llm(messages):
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        stream=True,
-    )
-
-    full_answer = ""
-
-    for chunk in response:
-        content = chunk.choices[0].delta.content
-
-        if content:
-            print(content, end="", flush=True)
-            full_answer += content
-
-    print()
-
-    return full_answer
+from config import MODEL
+from llm import ask_llm
 
 
 def main():
@@ -93,8 +57,6 @@ def main():
             print(f"Ошибка: {error}")
             print()
 
-            # Удаляем последний запрос пользователя,
-            # если модель не смогла ответить.
             messages.pop()
 
 
