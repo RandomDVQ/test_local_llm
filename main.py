@@ -21,9 +21,21 @@ def ask_llm(messages):
     response = client.chat.completions.create(
         model=MODEL,
         messages=messages,
+        stream=True,
     )
 
-    return response.choices[0].message.content
+    full_answer = ""
+
+    for chunk in response:
+        content = chunk.choices[0].delta.content
+
+        if content:
+            print(content, end="", flush=True)
+            full_answer += content
+
+    print()
+
+    return full_answer
 
 
 def main():
@@ -62,11 +74,10 @@ def main():
         )
 
         try:
-            answer = ask_llm(messages)
+            print()
+            print("Qwen: ", end="", flush=True)
 
-            print()
-            print(f"Qwen: {answer}")
-            print()
+            answer = ask_llm(messages)
 
             messages.append(
                 {
@@ -75,10 +86,16 @@ def main():
                 }
             )
 
+            print()
+
         except Exception as error:
             print()
             print(f"Ошибка: {error}")
             print()
+
+            # Удаляем последний запрос пользователя,
+            # если модель не смогла ответить.
+            messages.pop()
 
 
 if __name__ == "__main__":
