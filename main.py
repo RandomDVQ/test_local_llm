@@ -1,13 +1,19 @@
+import os
+
+from dotenv import load_dotenv
 from openai import OpenAI
 
 
-MODEL = "qwen/qwen3.6-35b-a3b"
-BASE_URL = "http://localhost:1234/v1"
+load_dotenv()
+
+MODEL = os.getenv("MODEL")
+BASE_URL = os.getenv("BASE_URL")
+API_KEY = os.getenv("API_KEY")
 
 
 client = OpenAI(
     base_url=BASE_URL,
-    api_key="lm-studio",
+    api_key=API_KEY,
 )
 
 
